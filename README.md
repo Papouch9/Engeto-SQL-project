@@ -1,2 +1,1 @@
-# Engeto-SQL-project
-Engeto SQL project repository
+Ahoj, toto je můj SQL projekt. Výpomocné tabulky t_question<X> obsahují potřebné mezivýpočty. Konečné odpovědi v jednoduché tabulkové formě na jednotlivé otázky (tak jak jsou položeny v zadání projektu) jsou ve views v_question<X>. K Power BI vizualizaci používám data z mezivýpočtových tabulek, aby v případě potřeby upravit jednotlivé otázky, byla tato vizualizace jednoduše škálovatelná.
