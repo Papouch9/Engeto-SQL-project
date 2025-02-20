@@ -1,3 +1,10 @@
+/*
+Engeto_SQL_project: čtvrtý projekt do Engeto Online Python Akademie
+author: Miroslav Kalík
+email: mira.kalik@seznam.cz
+discord: mira_47271
+*/
+
 CREATE OR REPLACE TABLE t_miroslav_kalik_project_SQL_primary_final AS (
 		SELECT
 		cpay.payroll_year chosen_year,
