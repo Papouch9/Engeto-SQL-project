@@ -1,4 +1,4 @@
-Ahoj, toto je můj Engeto SQL projekt. Tento projekt má za úkol zodpovědět několik základních otázek ohledně životní úrovně v České republice mezi roky 2006 a 2018. Konečné odpovědi na jednotlivé otázky jsou v jednotlivých views, v tabulkách t_question jsou potřebné mezivýpočty. Ve views v_qX_additionalX jsou query které vracejí konkrétní hodnoty, které zmiňuji v komntářích u jednotlivých otázek.
+Ahoj, toto je můj Engeto SQL projekt. Tento projekt má za úkol zodpovědět několik základních otázek ohledně životní úrovně v České republice mezi roky 2006 a 2018. Konečné odpovědi na jednotlivé otázky jsou v jednotlivých views, v tabulkách t_question jsou potřebné mezivýpočty.
 
 Pojďme se na otázky podívat.
 
