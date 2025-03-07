@@ -5,7 +5,7 @@ CREATE OR REPLACE TABLE t_question5_hdp_payroll_price_comparison AS (
 		LAG(AVG(hdp)) OVER (ORDER BY chosen_year) last_year_hpd,
 		(AVG(hdp) / lag(AVG(hdp)) OVER (ORDER BY chosen_year)) * 100 - 100 hdp_difference, 
 		AVG(branch_payroll_average),
-		LAG(avg(branch_payroll_average)) OVER (ORDER BY chosen_year) last_year_payroll_average,
+		LAG(AVG(branch_payroll_average)) OVER (ORDER BY chosen_year) last_year_payroll_average,
 		(AVG(branch_payroll_average) / LAG(AVG(branch_payroll_average)) OVER (ORDER BY chosen_year)) * 100 - 100 payroll_difference,
 		AVG(good_price_average_value) price_average,
 		LAG(AVG(good_price_average_value)) OVER (ORDER BY chosen_year) last_year_price_average,
