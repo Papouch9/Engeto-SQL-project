@@ -9,16 +9,16 @@ CREATE OR REPLACE TABLE t_miroslav_kalik_project_SQL_primary_final AS (
 		SELECT
 		cpay.payroll_year chosen_year,
 		cpay.industry_branch_code branch_code,
-		round(avg(cpay.value), 0) branch_payroll_average,
+		ROUND(AVG(cpay.value), 0) branch_payroll_average,
 		cpri.category_code good_category,
-		round(avg(cpri.value), 0) good_price_average_value,
+		ROUND(AVG(cpri.value), 0) good_price_average_value,
 		eco.GDP hdp
 	FROM czechia_payroll cpay
 	JOIN czechia_price cpri
-		ON cpay.payroll_year = year(cpri.date_from)
+		ON cpay.payroll_year = YEAR(cpri.date_from)
 	JOIN economies eco
 		ON cpay.payroll_year = eco.`year` 
-	WHERE eco.country = 'Czech Republic' AND cpay.industry_branch_code IS NOT null
+	WHERE eco.country = 'Czech Republic' AND cpay.industry_branch_code IS NOT NULL
 	GROUP BY cpay.payroll_year, cpay.industry_branch_code, YEAR(cpri.date_from), cpri.category_code
 );
 
@@ -26,7 +26,7 @@ CREATE OR REPLACE TABLE t_miroslav_kalik_project_sql_secondary_final AS (
 	SELECT 
 		eco.country,
 		eco.year,
-		round(eco.GDP, 0) GDP,
+		ROUND(eco.GDP, 0) GDP,
 		eco.gini,
 		cou.population 
 	FROM economies eco 
@@ -35,11 +35,11 @@ CREATE OR REPLACE TABLE t_miroslav_kalik_project_sql_secondary_final AS (
 	WHERE cou.continent = 'Europe' AND 
 		eco.year BETWEEN (
 			SELECT 
-				min(tmk.chosen_year)
+				MIN(tmk.chosen_year)
 			FROM t_miroslav_kalik_project_sql_primary_final tmk)
 				AND (
 			SELECT
-				max(tmk.chosen_year)
+				MAX(tmk.chosen_year)
 			FROM t_miroslav_kalik_project_sql_primary_final tmk)
 	ORDER BY eco.country, eco.year
 );
@@ -64,10 +64,10 @@ CREATE OR REPLACE TABLE t_question1_payroll_increasing AS (
 CREATE OR REPLACE TABLE t_question2_goods_buy_possibility AS (
 	(SELECT 
 		tmk.chosen_year,
-		round(AVG(tmk.branch_payroll_average), 0) payroll_average_all,
+		ROUND(AVG(tmk.branch_payroll_average), 0) payroll_average_all,
 		cpc.name,
 		tmk.good_price_average_value,
-		floor(tmk.branch_payroll_average / tmk.good_price_average_value) buy_possibility
+		FLOOR(tmk.branch_payroll_average / tmk.good_price_average_value) buy_possibility
 	FROM t_miroslav_kalik_project_sql_primary_final tmk
 	LEFT JOIN czechia_price_category cpc 
 		ON tmk.good_category = cpc.code
@@ -78,10 +78,10 @@ CREATE OR REPLACE TABLE t_question2_goods_buy_possibility AS (
 UNION 
 	(SELECT 
 		tmk.chosen_year,
-		round(AVG(tmk.branch_payroll_average), 0) payroll_average_all,
+		ROUND(AVG(tmk.branch_payroll_average), 0) payroll_average_all,
 		cpc.name,
 		tmk.good_price_average_value,
-		floor(tmk.branch_payroll_average / tmk.good_price_average_value) buy_possibility
+		FLOOR(tmk.branch_payroll_average / tmk.good_price_average_value) buy_possibility
 	FROM t_miroslav_kalik_project_sql_primary_final tmk
 	LEFT JOIN czechia_price_category cpc 
 		ON tmk.good_category = cpc.code
@@ -98,7 +98,7 @@ CREATE OR REPLACE TABLE t_question3_price_increasing AS (
 		tmk.good_price_average_value,
 		LAG(good_price_average_value) OVER (PARTITION BY tmk.good_category ORDER BY tmk.chosen_year) AS last_year_good_price_average_value,
 		tmk.good_price_average_value - LAG(good_price_average_value) OVER (PARTITION BY tmk.good_category ORDER BY tmk.chosen_year) AS difference,
-		round((((tmk.good_price_average_value / LAG(good_price_average_value) OVER (PARTITION BY tmk.good_category ORDER BY tmk.chosen_year)) - 1) * 100), 2) AS pct_difference
+		ROUND((((tmk.good_price_average_value / LAG(good_price_average_value) OVER (PARTITION BY tmk.good_category ORDER BY tmk.chosen_year)) - 1) * 100), 2) AS pct_difference
 	FROM t_miroslav_kalik_project_sql_primary_final tmk
 	JOIN czechia_price_category cpc 
 		ON tmk.good_category = cpc.code 
@@ -123,15 +123,15 @@ CREATE OR REPLACE TABLE t_question4_payroll_price_comparison (
 CREATE OR REPLACE TABLE t_question5_hdp_payroll_price_comparison AS (
 	SELECT 
 		chosen_year,
-		avg(hdp) hdp,
-		lag(avg(hdp)) OVER (ORDER BY chosen_year) last_year_hpd,
-		(avg(hdp) / lag(avg(hdp)) OVER (ORDER BY chosen_year)) * 100 - 100 hdp_difference, 
-		avg(branch_payroll_average),
-		lag(avg(branch_payroll_average)) OVER (ORDER BY chosen_year) last_year_payroll_average,
-		(avg(branch_payroll_average) / lag(avg(branch_payroll_average)) OVER (ORDER BY chosen_year)) * 100 - 100 payroll_difference,
-		avg(good_price_average_value) price_average,
-		lag(avg(good_price_average_value)) OVER (ORDER BY chosen_year) last_year_price_average,
-		(avg(good_price_average_value) / lag(avg(good_price_average_value)) OVER (ORDER BY chosen_year)) * 100 - 100 price_difference
+		AVG(hdp) hdp,
+		LAG(AVG(hdp)) OVER (ORDER BY chosen_year) last_year_hpd,
+		(AVG(hdp) / lag(AVG(hdp)) OVER (ORDER BY chosen_year)) * 100 - 100 hdp_difference, 
+		AVG(branch_payroll_average),
+		LAG(avg(branch_payroll_average)) OVER (ORDER BY chosen_year) last_year_payroll_average,
+		(AVG(branch_payroll_average) / LAG(AVG(branch_payroll_average)) OVER (ORDER BY chosen_year)) * 100 - 100 payroll_difference,
+		AVG(good_price_average_value) price_average,
+		LAG(AVG(good_price_average_value)) OVER (ORDER BY chosen_year) last_year_price_average,
+		(AVG(good_price_average_value) / LAG(AVG(good_price_average_value)) OVER (ORDER BY chosen_year)) * 100 - 100 price_difference
 	FROM t_miroslav_kalik_project_sql_primary_final
 	GROUP BY chosen_year
 
@@ -156,7 +156,7 @@ CREATE OR REPLACE VIEW v_question2_goods_buy_possibility AS (
 CREATE OR REPLACE VIEW v_question3_price_increasing AS (
 	SELECT
 		name, 
-		round(avg(pct_difference), 2) average_difference
+		ROUND(AVG(pct_difference), 2) average_difference
 	FROM t_question3_price_increasing
 	GROUP BY name
 	ORDER BY average_difference
@@ -166,7 +166,7 @@ CREATE OR REPLACE VIEW v_question3_price_increasing AS (
 CREATE OR REPLACE VIEW v_question4_payroll_price_comparison AS (
 	SELECT 
 		chosen_year,
-		round(price_payroll_comparison, 2) price_payroll_difference
+		ROUND(price_payroll_comparison, 2) price_payroll_difference
 	FROM t_question4_payroll_price_comparison
 	WHERE price_payroll_comparison > 10
 );
@@ -174,11 +174,11 @@ CREATE OR REPLACE VIEW v_question4_payroll_price_comparison AS (
 CREATE OR REPLACE VIEW v_question5_hdp_payroll_price_comparison AS (
 	SELECT
 		chosen_year,
-		round(hdp_difference, 2) hdp_difference,
-		round(payroll_difference, 2) payroll_difference,
-		round(lead(payroll_difference) OVER (ORDER BY chosen_year), 2) next_year_payroll_difference,
-		round(price_difference, 2) price_difference,
-		round(lead(price_difference) OVER (ORDER BY chosen_year), 2) next_year_price_difference
+		ROUND(hdp_difference, 2) hdp_difference,
+		ROUND(payroll_difference, 2) payroll_difference,
+		ROUND(LEAD(payroll_difference) OVER (ORDER BY chosen_year), 2) next_year_payroll_difference,
+		ROUND(price_difference, 2) price_difference,
+		ROUND(LEAD(price_difference) OVER (ORDER BY chosen_year), 2) next_year_price_difference
 	FROM t_question5_hdp_payroll_price_comparison
 	WHERE hdp_difference > 5
 );
